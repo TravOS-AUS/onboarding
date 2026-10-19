@@ -73,3 +73,37 @@ The version requirements live in these scripts and nowhere else. The workspace
 docs link here instead of listing them. When a repo moves to a new .NET, Node or
 Aspire version, change it here in the same piece of work. Then run the check
 mode on your own machine before opening the pull request.
+
+## Testing
+
+Nothing here runs in CI. A change to what a script installs gets tested by hand
+on a clean machine, on each operating system it touches, before it merges.
+
+**A clean machine.**
+
+- Windows: a new Hyper-V Windows 11 VM. Windows Sandbox is lighter, but it may
+  not have winget, and it has to be enabled first.
+- macOS: a macOS VM (UTM or Tart on Apple Silicon), or a new macOS user account.
+  A new account gets a clean home folder, but it shares Homebrew in
+  `/opt/homebrew` with the other accounts.
+
+**The run.** Use the one-liners above, pointed at your branch, by replacing
+`main` in the URL with the branch name:
+
+1. Check mode. Almost every row shows FIX, the script reaches its last row,
+   "Auth0 secret", and nothing in the home folder changes.
+2. The full developer script. Approve the admin prompt, sign in to GitHub in the
+   browser and paste the Auth0 secret. The end checklist is all ok except
+   "Docker running".
+3. Open Docker Desktop once, then check mode again. Every row is ok.
+4. The full script again. It installs nothing and asks for nothing.
+5. `aspire run` from the clone. The dashboard opens, and the portals answer on
+   `http://localhost:4200` and `http://localhost:4300`.
+6. The tester script. The browsers install and the links print.
+
+Post the operating system, the CPU architecture and any FIX rows as a comment on
+the pull request.
+
+Before any of that, `bash -n setup-developer.sh` and `bash -n setup-tester.sh`
+catch a syntax error in seconds. On a Mac, run them with `/bin/bash`, which is
+the bash 3.2 a new Mac has.
